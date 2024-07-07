@@ -19,7 +19,6 @@ import random
 import os
 import re
 import pickle
-import matplotlib.pyplot as plt
 from sklearn.manifold import TSNE
 import nltk
 nltk.download('stopwords')
@@ -48,7 +47,7 @@ class Candidate():
     feature_mgram: int, optional
         Number of multi-gram features to consider. Default is 10000.
     punctuation: str, optional
-        Punctuation characters to use for splitting sentences. Default is r'[?!,.\]'.
+        Punctuation characters to use for splitting sentences. 
     """
     def __init__(self, documents,
                  mode: str = 'n_gram',
@@ -280,7 +279,8 @@ class CAST:
 
 
     def build_word_embeddings(self, tokenized, token_embeddings):
-        """
+        
+        """ 
         Build word embeddings from tokenized documents and token embeddings.
 
         Unlike static encoding methods, our approach dynamically reconstructed word embeddings from token embeddings generated 
