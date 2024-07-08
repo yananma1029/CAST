@@ -622,6 +622,7 @@ class CAST:
             return normalize(vectors.reshape(1, -1))[0]
     
     def get_topn_clusters (self, centroids):
+        
         """
         Get top N clusters based on topic size.
 
