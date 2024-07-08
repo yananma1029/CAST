@@ -76,3 +76,4 @@ class TopicDiversity():
                 unique_words = unique_words.union(set(topic[:self.topk]))
             td = len(unique_words) / (self.topk * len(topics))
             return td
+    
