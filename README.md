@@ -4,7 +4,7 @@
 
 
 <p align="center">
-    <img src="https://github.com/amazingmatthew/CAST/blob/main/figs/CAST.png?sanitize=true" alt="" width=800 height="whatever">
+    <img src="https://github.com/amazingmatthew/CAST/blob/main/images/CAST.png?sanitize=true" alt="" width=800 height="whatever">
 </p>
 
 >Two modules to identify meaningful candidate topic words. Module 1: word embeddings contextualized on the dataset. Module 2: self-similarity scores to filter out functional words. Purple points are documents with semantically similar documents clustered together. Higher-scoring words (green) are served as meaningful candidate topic words (green points) and assigned to their closet clusters.
@@ -25,7 +25,7 @@ Inspired by the findings in contrastive learning that functional tokens have few
 
 
 <p align="center">
-    <img src="https://github.com/amazingmatthew/CAST/blob/main/figs/ablation.png?sanitize=true" alt="" width=700 height="whatever">
+    <img src="https://github.com/amazingmatthew/CAST/blob/main/images/ablation.png?sanitize=true" alt="" width=700 height="whatever">
 </p>
 
 > An optimal range of self-similarity scores can increase topic coherence (TC) and topic diversity (TD), but excessively high thresholds may filter out meaningful words, thereby reducing TC and TD. LLM refers to large language model.
