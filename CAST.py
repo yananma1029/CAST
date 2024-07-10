@@ -19,6 +19,7 @@ import random
 import os
 import re
 import pickle
+import matplotlib.pyplot as plt
 from sklearn.manifold import TSNE
 import nltk
 nltk.download('stopwords')
@@ -29,26 +30,15 @@ from sklearn.cluster import AgglomerativeClustering
 from collections import defaultdict
 
 
+logger = logging.getLogger('CAST')
+logger.setLevel(logging.DEBUG)
+sh = logging.StreamHandler()
+sh.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
+logger.addHandler(sh)
+
+
 class Candidate():
 
-    """
-    Build candidate words or phrases from a corpus of documents.
-
-    Parameters
-    ----------
-    documents: List[str]
-        List of documents to process.
-    mode: str, optional
-        Mode of candidate generation ('n_gram', 'sentence_level', or 'document_level'). Default is 'n_gram'.
-    ngram_range: Tuple[int, int], optional
-        Range of n-gram sizes to consider. Default is (2, 4).
-    feature_1gram: int, optional
-        Number of 1-gram features to consider. Default is 2000.
-    feature_mgram: int, optional
-        Number of multi-gram features to consider. Default is 10000.
-    punctuation: str, optional
-        Punctuation characters to use for splitting sentences. 
-    """
     def __init__(self, documents,
                  mode: str = 'n_gram',
                  ngram_range = (2,4),
@@ -155,15 +145,12 @@ class CAST:
     umap_args: dict, optional
         Arguments for UMAP dimensionality reduction. Default includes 'n_neighbors': 15 and 'metric': 'cosine'.
 
-    verbose: bool (Default True)
-    If True, print logger info messages. 
     """
 
 
     def __init__(self, documents, model_name, min_count = 50, self_sim_threshold=0.3, chunk_size=1000, batch_size=32, candidate_mode = 'word_level',
-                nr_topics = None, n_dimensions = 5, min_cluster_size=5, umap_args={'n_neighbors': 15,  'metric': 'cosine'}, verbose=True):
+                nr_topics = None, n_dimensions = 5, min_cluster_size=5, umap_args={'n_neighbors': 15,  'metric': 'cosine'}):
         
-        self.verbose = verbose
         self.corpus = documents
         self.self_sim_threshold = self_sim_threshold
         self.batch_size = batch_size
@@ -181,23 +168,6 @@ class CAST:
         self.candidate_mode = candidate_mode
         self.chunk_size = chunk_size
 
-        self.logger = logging.getLogger('CAST')
-        self.logger.setLevel(logging.DEBUG if verbose else logging.ERROR)
-        sh = logging.StreamHandler()
-        sh.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
-        self.logger.addHandler(sh)
-
-    def log_info(self, message):
-        """
-        Log info messages if verbose is True.
-
-        Parameters
-        ----------
-        message: str
-            The message to log.
-        """
-        if self.verbose:
-            self.logger.info(message)
 
     def mean_pooling(self, model_output, attention_mask):
         """
@@ -279,8 +249,7 @@ class CAST:
 
 
     def build_word_embeddings(self, tokenized, token_embeddings):
-        
-        """ 
+        """
         Build word embeddings from tokenized documents and token embeddings.
 
         Unlike static encoding methods, our approach dynamically reconstructed word embeddings from token embeddings generated 
@@ -369,7 +338,7 @@ class CAST:
         for word_embeddings_dict in tqdm(word_embedding_list, desc="Merging word embeddings"):
             for word, embeddings_list in word_embeddings_dict.items():
                 lower_word = word.lower()
-                if lower_word not in self.stop_words:
+                if lower_word not in self.stop_words and len(lower_word)>1:
                     merged_word_embeddings[word].extend(embeddings_list)
 
         for word, embeddings_list in merged_word_embeddings.items():
@@ -474,7 +443,7 @@ class CAST:
                     candidates[word] = self.l2_normalize(np.mean(word_embeddings[word], axis=0))
 
         elif mode == 'ngrams':
-            self.log_info(f"Building ngrams candidates")
+            logger.info(f"Building ngrams candidates")
             ngrams = Candidate(self.corpus, mode = 'n_gram').build_vocab()
             candidates = self.build_ngram_embeddings(ngrams, word_embeddings)
 
@@ -622,7 +591,6 @@ class CAST:
             return normalize(vectors.reshape(1, -1))[0]
     
     def get_topn_clusters (self, centroids):
-        
         """
         Get top N clusters based on topic size.
 
@@ -642,7 +610,7 @@ class CAST:
         original_num_topics = len(centroids.keys())
 
         if original_num_topics < 2 or self.nr_topics >= original_num_topics:
-            self.log_info(f"Please enter a value that is less than the original number of topics {original_num_topics}")
+            logger.warning(f"Please enter a value that is less than the original number of topics {original_num_topics}")
             return centroids
 
         top_centroids = dict(list(centroids.items())[:self.nr_topics])
@@ -700,13 +668,13 @@ class CAST:
         word_embeddings_file = os.path.join(embeddings_path, f"{self.model_name.replace('/', '_')}_word_embeddings.pkl")
 
         if os.path.exists(sen_embeddings_file) and os.path.exists(word_embeddings_file):
-            self.log_info(f"Loading pre-computed sentence embeddings and word embeddings from {sen_embeddings_file} and {word_embeddings_file}")
+            logger.info(f"Loading pre-computed sentence embeddings and word embeddings from {sen_embeddings_file} and {word_embeddings_file}")
             with open(sen_embeddings_file, "rb") as f:
                 sentence_embeddings = pickle.load(f)
             with open(word_embeddings_file, "rb") as f:
                 word_embeddings = pickle.load(f)
         else:
-            self.log_info(f"Tokenizing text with model: {self.model_name}")
+            logger.info(f"Tokenizing text with model: {self.model_name}")
 
             sentence_embeddings_batches = []
             word_embedding_lists = []
@@ -731,7 +699,7 @@ class CAST:
             with open(word_embeddings_file, "wb") as f:
                 pickle.dump(word_embeddings, f)
 
-        self.log_info(f"Filtering out words self_similarity score lower than {self.self_sim_threshold} words and build candidate words")
+        logger.info(f"Filtering out words self_similarity score lower than {self.self_sim_threshold} words and build candidate words")
         ss_score = self.ss_similarity(word_embeddings)
         candidate_words = self.build_candidates(ss_score, word_embeddings, mode=candidate_mode)
 
@@ -753,12 +721,12 @@ class CAST:
         if isinstance(self.sentence_embeddings, torch.Tensor):
             self.sentence_embeddings = self.sentence_embeddings.cpu()
             
-        self.log_info(f"Creating lower dimension of embeddings to {self.dimension}D")
+        logger.info(f"Creating lower dimension of embeddings to {self.dimension}D")
 
         umap_embeddings = self.DR(np.array(self.sentence_embeddings), umap_args=self.umap_args) # used to find clusters
         candidate_words = self.word_embeddings
 
-        self.log_info("Finding dense areas of documents")
+        logger.info("Finding dense areas of documents")
         cluster_labels, outlier_scores = self.clustering(umap_embeddings, min_cluster_size=self.min_cluster_size)
 
         self.document_vector, self.centroids = self.centroid(self.sentence_embeddings, cluster_labels)
@@ -769,7 +737,7 @@ class CAST:
             top_centroids = self.get_topn_clusters(self.centroids)
 
 
-        self.log_info("Finding topics")
+        logger.info("Finding topics")
         top_words = self.get_topic_words(candidate_words, top_centroids)
 
 
