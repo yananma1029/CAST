@@ -680,7 +680,7 @@ class CAST:
         return top_centroids
 
 
-    def get_top_n_sentences(self, nr_sentences=5, cluster_number = None):
+    def get_top_n_sentences(self, nr_sentences=5, topic_number = None):
         """
         Retrieves the top n sentences for each cluster based on cosine similarity to the cluster centroid.
         
@@ -695,7 +695,7 @@ class CAST:
         
         cluster_data = []
 
-        if cluster_number is None: 
+        if topic_number is None: 
             
             for cluster, centroid in self.top_centroids.items():
                 cluster_df = self.document_vector[self.document_vector['label'] == cluster]
@@ -718,12 +718,12 @@ class CAST:
                 })
         
         else:
-            if cluster_number not in self.top_centroids:
+            if topic_number not in self.top_centroids:
                 logger.warning("Please enter a valid cluster")
                 return
             
-            centroid = self.top_centroids[cluster_number]
-            cluster_df = self.document_vector[self.document_vector['label'] == cluster_number]
+            centroid = self.top_centroids[topic_number]
+            cluster_df = self.document_vector[self.document_vector['label'] == topic_number]
             sentences = cluster_df['text'].tolist()
             candidate_embeddings = cluster_df['rep'].tolist()
 
@@ -734,7 +734,7 @@ class CAST:
             top_sentences = [sentence for sentence, _ in sentence_similarity_pairs[:nr_sentences]]
 
             cluster_data.append({
-                'Topic': cluster_number,
+                'Topic': topic_number,
                 'Count': len(cluster_df),
                 'Top_Sentences': top_sentences
             })
