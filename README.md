@@ -21,14 +21,14 @@ where $P$ is the number of different contexts in which the word appears, and $\t
 
 ### Self-similarity score
 
-Inspired by the findings in contrastive learning that functional tokens have fewer self-similarities than that of semantic tokens sup>[1]</sup>, we employ a self-similarity threshold  to effectively filter out functional words or less relevant words and keep meaningful candidate topic words. 
+Inspired by the findings in contrastive learning that functional tokens have fewer self-similarities than that of semantic tokens <sup>[1](#reference1)</sup>, we employ a self-similarity threshold  to effectively filter out functional words or less relevant words and keep meaningful candidate topic words. 
 
 
 <p align="center">
-    <img src="https://github.com/amazingmatthew/CAST/blob/main/images/ablation.png?sanitize=true" alt="" width=700 height="whatever">
+    <img src="https://github.com/amazingmatthew/CAST/blob/main/images/ablation.png?sanitize=true" alt="" width=600 height="whatever">
 </p>
 
-> An optimal range of self-similarity scores can increase topic coherence (TC) and topic diversity (TD), but excessively high thresholds may filter out meaningful words, thereby reducing TC and TD. LLM refers to large language model.
+> An optimal range of self-similarity scores can increase topic coherence (TC) and topic diversity (TD), but excessively high thresholds may filter out meaningful words, thereby reducing TC and TD. LLM refers to large language model based metrics.
 
 ## Features
 
@@ -74,10 +74,13 @@ topic_model = CAST(
     documents=documents,
     model_name="sentence-transformers/all-mpnet-base-v2", # Support other sentence embedding models
     min_count=50,
-    self_sim_threshold=0.3,
+    self_sim_threshold=0.3, 
     nr_topics=10,  # set to None to automatically determine the number of topics
     verbose=True
 )
+
+> The `self_sim_threshold` parameter filters out lower-scoring words (normally not meaningful words). You can adjust this value to achieve optimal results based on your corpus. Our experiment found that a threshold between 0.2 and 0.4 yielded the best results.
+
 ```
 
 Run the topic modelling pipeline to find topics
@@ -125,4 +128,4 @@ print(top_sen)
 
 
 ## References
-[1] Xiao, C., Long, Y., & Moubayed, N. A. (2022). On isotropy, contextualization and learning dynamics of contrastive-based sentence representation learning. arXiv preprint arXiv:2212.09170.
+<a name="reference1">1</a>. Xiao, C., Long, Y., & Moubayed, N. A. (2022). On isotropy, contextualization and learning dynamics of contrastive-based sentence representation learning. arXiv preprint arXiv:2212.09170.
