@@ -379,6 +379,69 @@ class CAST:
                 ss_score[k] = self_similarity
 
         return ss_score
+    
+    def build_embeddings(self, candidate_mode='word_level'):
+        """
+        Generate sentence and word embeddings for the corpus, storing them in the 'embeddings' folder. 
+        The function will first check if embeddings already exist in the 'embeddings' folder. 
+        If they do, it will load the existing embeddings to save time when the model is run multiple times.
+
+        Parameters
+        ----------
+        candidate_mode: str, optional
+            Mode for candidate generation ('word_level' or 'ngrams'). Default is 'word_level'.
+
+        Returns
+        -------
+        Tuple[np.ndarray, Dict[str, np.ndarray]]
+            Sentence embeddings and word embeddings.
+        """
+
+        embeddings_path = os.path.join(os.getcwd(), "embeddings")
+        os.makedirs(embeddings_path, exist_ok=True)
+        sen_embeddings_file = os.path.join(embeddings_path, f"{self.model_name.replace('/', '_')}_sen_embeddings.pkl")
+        word_embeddings_file = os.path.join(embeddings_path, f"{self.model_name.replace('/', '_')}_word_embeddings.pkl")
+
+        if os.path.exists(sen_embeddings_file) and os.path.exists(word_embeddings_file):
+            logger.info(f"Loading pre-computed sentence embeddings and word embeddings")
+            with open(sen_embeddings_file, "rb") as f:
+                sentence_embeddings = pickle.load(f)
+            with open(word_embeddings_file, "rb") as f:
+                word_embeddings = pickle.load(f)
+        else:
+            logger.info(f"Tokenizing text with model: {self.model_name}")
+
+            sentence_embeddings_batches = []
+            word_embedding_lists = []
+
+            for start_idx in tqdm(range(0, len(self.corpus), self.chunk_size), desc="Processing chunk batches"):
+                end_idx = start_idx + self.chunk_size
+
+                batch_documents = self.corpus[start_idx:end_idx]
+                tokenized_batch, token_embeddings_batch, sentence_embeddings_batch = self.encoding(batch_documents)
+                sentence_embeddings_batches.extend(sentence_embeddings_batch)  
+
+                word_embedding_list = self.build_word_embeddings(tokenized_batch, token_embeddings_batch)              
+                word_embedding_lists.extend(word_embedding_list)
+                    
+
+            sentence_embeddings = np.array(sentence_embeddings_batches)
+            print (f"length of sentence_embeddings: {len(sentence_embeddings)}")
+            with open(sen_embeddings_file, "wb") as f:
+                pickle.dump(sentence_embeddings, f)
+
+            word_embeddings = self.merge_word_embeddings(word_embedding_lists)
+            with open(word_embeddings_file, "wb") as f:
+                pickle.dump(word_embeddings, f)
+
+        logger.info(f"Filtering out functional words and building candidate words")
+        ss_score = self.ss_similarity(word_embeddings)
+        candidate_words = self.build_candidates(ss_score, word_embeddings, mode=candidate_mode)
+
+        self.sentence_embeddings = sentence_embeddings
+        self.word_embeddings = candidate_words
+
+        return self.sentence_embeddings, self.word_embeddings
 
     def build_ngram_embeddings(self, ngrams, word_embeddings_dict):
 
@@ -510,7 +573,7 @@ class CAST:
         Returns
         -------
         Tuple[pd.DataFrame, Dict[int, np.ndarray]]
-            Updated DataFrame with cluster information and dictionary of centroids.
+            Updated DataFrame with cluster information and dictionary of centroids sorted according to topic size.
         """
 
         documents = self.corpus
@@ -616,7 +679,71 @@ class CAST:
         top_centroids = dict(list(centroids.items())[:self.nr_topics])
         return top_centroids
 
-    
+
+    def get_top_n_sentences(self, nr_sentences=5, cluster_number = None):
+        """
+        Retrieves the top n sentences for each cluster based on cosine similarity to the cluster centroid.
+        
+        Parameters:
+        nr_sentences (int, default=5): Number of top sentences to retrieve for each cluster.
+        cluster_number (int, optional): Specific cluster number to retrieve sentences from. Defaults to None. 
+            If it is None, it will return the top sentences for all clusters.
+        
+        Returns:
+        dict: A dictionary with cluster labels as keys and lists of top sentences as values.
+        """
+        
+        cluster_data = []
+
+        if cluster_number is None: 
+            
+            for cluster, centroid in self.top_centroids.items():
+                cluster_df = self.document_vector[self.document_vector['label'] == cluster]
+                sentences = cluster_df['text'].tolist()
+                candidate_embeddings = cluster_df['rep'].tolist()
+
+                # Compute cosine similarity between candidate embeddings and the centroid
+                similarities = cosine_similarity([centroid], candidate_embeddings)[0]
+
+                # Pair sentences with their similarity scores and sort by similarity in descending order
+                sentence_similarity_pairs = sorted(zip(sentences, similarities), key=lambda x: x[1], reverse=True)
+
+                # Select the top n sentences
+                top_sentences = [sentence for sentence, _ in sentence_similarity_pairs[:nr_sentences]]
+
+                cluster_data.append({
+                    'Topic': cluster,
+                    'Count': len(cluster_df),
+                    'Top_Sentences': top_sentences
+                })
+        
+        else:
+            if cluster_number not in self.top_centroids:
+                logger.warning("Please enter a valid cluster")
+                return
+            
+            centroid = self.top_centroids[cluster_number]
+            cluster_df = self.document_vector[self.document_vector['label'] == cluster_number]
+            sentences = cluster_df['text'].tolist()
+            candidate_embeddings = cluster_df['rep'].tolist()
+
+            similarities = cosine_similarity([centroid], candidate_embeddings)[0]
+
+            sentence_similarity_pairs = sorted(zip(sentences, similarities), key=lambda x: x[1], reverse=True)
+
+            top_sentences = [sentence for sentence, _ in sentence_similarity_pairs[:nr_sentences]]
+
+            cluster_data.append({
+                'Topic': cluster_number,
+                'Count': len(cluster_df),
+                'Top_Sentences': top_sentences
+            })
+
+        df = pd.DataFrame(cluster_data, columns=['Topic', 'Count', 'Top_Sentences'])
+
+        return df
+
+
     def get_topic_words(self, embeddings, centroids):
         """
         Get top words for each topic based on cosine similarity to centroids.
@@ -645,68 +772,7 @@ class CAST:
 
         return topic_keywords
 
-    def build_embeddings(self, candidate_mode='word_level'):
-        """
-        Generate sentence and word embeddings for the corpus, storing them in the 'embeddings' folder. 
-        The function will first check if embeddings already exist in the 'embeddings' folder. 
-        If they do, it will load the existing embeddings to save time when the model is run multiple times.
 
-        Parameters
-        ----------
-        candidate_mode: str, optional
-            Mode for candidate generation ('word_level' or 'ngrams'). Default is 'word_level'.
-
-        Returns
-        -------
-        Tuple[np.ndarray, Dict[str, np.ndarray]]
-            Sentence embeddings and word embeddings.
-        """
-
-        embeddings_path = os.path.join(os.getcwd(), "embeddings")
-        os.makedirs(embeddings_path, exist_ok=True)
-        sen_embeddings_file = os.path.join(embeddings_path, f"{self.model_name.replace('/', '_')}_sen_embeddings.pkl")
-        word_embeddings_file = os.path.join(embeddings_path, f"{self.model_name.replace('/', '_')}_word_embeddings.pkl")
-
-        if os.path.exists(sen_embeddings_file) and os.path.exists(word_embeddings_file):
-            logger.info(f"Loading pre-computed sentence embeddings and word embeddings from {sen_embeddings_file} and {word_embeddings_file}")
-            with open(sen_embeddings_file, "rb") as f:
-                sentence_embeddings = pickle.load(f)
-            with open(word_embeddings_file, "rb") as f:
-                word_embeddings = pickle.load(f)
-        else:
-            logger.info(f"Tokenizing text with model: {self.model_name}")
-
-            sentence_embeddings_batches = []
-            word_embedding_lists = []
-
-            for start_idx in tqdm(range(0, len(self.corpus), self.chunk_size), desc="Processing chunk batches"):
-                end_idx = start_idx + self.chunk_size
-
-                batch_documents = self.corpus[start_idx:end_idx]
-                tokenized_batch, token_embeddings_batch, sentence_embeddings_batch = self.encoding(batch_documents)
-                sentence_embeddings_batches.extend(sentence_embeddings_batch)  
-
-                word_embedding_list = self.build_word_embeddings(tokenized_batch, token_embeddings_batch)              
-                word_embedding_lists.extend(word_embedding_list)
-                    
-
-            sentence_embeddings = np.array(sentence_embeddings_batches)
-            print (f"length of sentence_embeddings: {len(sentence_embeddings)}")
-            with open(sen_embeddings_file, "wb") as f:
-                pickle.dump(sentence_embeddings, f)
-
-            word_embeddings = self.merge_word_embeddings(word_embedding_lists)
-            with open(word_embeddings_file, "wb") as f:
-                pickle.dump(word_embeddings, f)
-
-        logger.info(f"Filtering out words self_similarity score lower than {self.self_sim_threshold} words and build candidate words")
-        ss_score = self.ss_similarity(word_embeddings)
-        candidate_words = self.build_candidates(ss_score, word_embeddings, mode=candidate_mode)
-
-        self.sentence_embeddings = sentence_embeddings
-        self.word_embeddings = candidate_words
-
-        return self.sentence_embeddings, self.word_embeddings
 
     def pipeline(self):
         """
@@ -721,7 +787,7 @@ class CAST:
         if isinstance(self.sentence_embeddings, torch.Tensor):
             self.sentence_embeddings = self.sentence_embeddings.cpu()
             
-        logger.info(f"Creating lower dimension of embeddings to {self.dimension}D")
+        logger.info(f"Reducing embedding dimensions to {self.dimension}D")
 
         umap_embeddings = self.DR(np.array(self.sentence_embeddings), umap_args=self.umap_args) # used to find clusters
         candidate_words = self.word_embeddings
@@ -732,14 +798,13 @@ class CAST:
         self.document_vector, self.centroids = self.centroid(self.sentence_embeddings, cluster_labels)
 
         if self.nr_topics is None:
-            top_centroids = self.centroids
+            self.top_centroids = self.centroids
         else:
-            top_centroids = self.get_topn_clusters(self.centroids)
+            self.top_centroids = self.get_topn_clusters(self.centroids)
 
 
         logger.info("Finding topics")
-        top_words = self.get_topic_words(candidate_words, top_centroids)
-
+        top_words = self.get_topic_words(candidate_words, self.top_centroids)
 
         return top_words
 
