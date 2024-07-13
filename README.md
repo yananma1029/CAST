@@ -78,10 +78,8 @@ topic_model = CAST(
     nr_topics=10,  # set to None to automatically determine the number of topics
     verbose=True
 )
-
-> The `self_sim_threshold` parameter filters out lower-scoring words (normally not meaningful words). You can adjust this value to achieve optimal results based on your corpus. Our experiment found that a threshold between 0.2 and 0.4 yielded the best results.
-
 ```
+> The `self_sim_threshold` parameter filters out lower-scoring words, which are typically not meaningful. You can adjust this value (suggested range 0.2-0.5) to achieve optimal results based on your corpus.  An excessively high threshold may filter out meaningful words, leading to lower topic coherence and diversity.
 
 Run the topic modelling pipeline to find topics
 
