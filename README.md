@@ -101,7 +101,8 @@ Cluster 7: gun firearm weapon shoot armed violent bullet criminal assault batf
 Cluster 8: gay homosexual homosexuality sexual male sex behavior man adult woman
 Cluster 9: village armenian turkish soldier army foreign russian soviet occupy organize
 ```
-Using `.search_docs_by_topic` you can get the top_n_sentences associated with the topics. You can specify a `topic_number`, or set `topic_number = None` to get the top_n_sentences for all the topics.
+## Get top_n_sentences associated with the topics
+After running the `.pipeline` you can use `.search_docs_by_topic` to get the top_n_sentences associated with the topics. You can specify a `topic_number`, or set `topic_number = None` to get the top_n_sentences for all the topics.
 
 ```python
 top_sen = model.search_docs_by_topic(topic_number = None, num_docs=10)
@@ -118,6 +119,49 @@ print(top_sen)
 7      7    247  [survey show public type gun control acceptabl...
 8      8    207  [recent study show number man engage homosexua...
 9      9    183  [convince sense world cold participate turkish...
+```
+
+## Sentiment analysis
+You can use `.sentiment_analysis_by_topic` to conduct the sentiment analysis for a specific `topic_number`. Setting `topic_number = None` will return sentences for all the clusters. We use social media data instead of the 20NewsGroup to demonstrate this function because the sentiment expressed on social media tends to be more varied and subjective, whereas news articles are generally more objective.
+
+```python
+positive_sen, negtive_sen = model.sentiment_analysis_by_topic(topic_number=1, num_docs=5) 
+```
+Returns:
+- `top_positive_sentences`: A dictionary where keys are topic numbers and values are lists of tuples with top positive sentences and their sentiment scores.
+- `top_negative_sentences`: A dictionary where keys are topic numbers and values are lists of tuples with top negative sentences and their sentiment scores.
+
+Print out the results:
+```python
+print('Positive:')
+for topic, sens in positive_sen.items():
+    print(f" Topic: {topic}")
+    for sen in sens:
+        print (f" {sen}")
+
+print('Negative:')
+for topic, sen in negtive_sen.items():
+    print(f"Topic: {topic}")
+    for sen in sens:
+        print (f" {sen}")
+```
+
+```python
+Positive:
+ Topic: 1
+ ('excellent news rob m a type diabetic and m hope to get my vaccine around marchapril time', 1.0)
+ ('good be get a rd shot soon bc have type diabetes amp addison s disease and despite be an athletic teenager my immune system be like a cranky old man refuse to get up out of his recliner and do its part', 0.4)
+ ('beside live with type diabete for almost year be a healthy yearold college student so be beyond bless to receive the vaccine read more about maguire student blogger s experience receive her covid vaccine here', 0.38)
+ ('tripleboosted wife be a covid nurse we be mask consistently have and so far so good no covid', 0.35)
+ ('i have a mild case in june but call my dr s office for paxlovid bc have addison s amp type diabetes be tell qualify bc of those condition but bc of they would need to go to the er to get the med despite be contagious amp there be a hour wait in the waiting room', 0.33)
+
+Negative:
+Topic: 1
+ ('excellent news rob m a type diabetic and m hope to get my vaccine around marchapril time', 1.0)
+ ('good be get a rd shot soon bc have type diabetes amp addison s disease and despite be an athletic teenager my immune system be like a cranky old man refuse to get up out of his recliner and do its part', 0.4)
+ ('beside live with type diabete for almost year be a healthy yearold college student so be beyond bless to receive the vaccine read more about maguire student blogger s experience receive her covid vaccine here', 0.38)
+ ('tripleboosted wife be a covid nurse we be mask consistently have and so far so good no covid', 0.35)
+ ('i have a mild case in june but call my dr s office for paxlovid bc have addison s amp type diabetes be tell qualify bc of those condition but bc of they would need to go to the er to get the med despite be contagious amp there be a hour wait in the waiting room', 0.33)
 ```
 
 
