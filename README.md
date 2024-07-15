@@ -104,7 +104,7 @@ Cluster 9: village armenian turkish soldier army foreign russian soviet occupy o
 Using `.get_top_n_sentences` you can get the top_n_sentences associated with the topics. You can specify a `topic_number`, or set `topic_number = None` to get the top_n_sentences for all the topics.
 
 ```python
-top_sen = model.get_top_n_sentences(nr_sentences=10, topic_number = None)
+top_sen = model.get_top_n_sentences(topic_number = None, num_docs=10)
 print(top_sen)
 >>>
    Topic  Count                                      Top_Sentences
