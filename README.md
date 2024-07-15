@@ -101,10 +101,10 @@ Cluster 7: gun firearm weapon shoot armed violent bullet criminal assault batf
 Cluster 8: gay homosexual homosexuality sexual male sex behavior man adult woman
 Cluster 9: village armenian turkish soldier army foreign russian soviet occupy organize
 ```
-Using `.get_top_n_sentences` you can get the top_n_sentences associated with the topics. You can specify a `topic_number`, or set `topic_number = None` to get the top_n_sentences for all the topics.
+Using `.search_docs_by_topic` you can get the top_n_sentences associated with the topics. You can specify a `topic_number`, or set `topic_number = None` to get the top_n_sentences for all the topics.
 
 ```python
-top_sen = model.get_top_n_sentences(topic_number = None, num_docs=10)
+top_sen = model.search_docs_by_topic(topic_number = None, num_docs=10)
 print(top_sen)
 >>>
    Topic  Count                                      Top_Sentences
