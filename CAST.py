@@ -680,7 +680,7 @@ class CAST:
         return top_centroids
 
 
-    def get_top_n_sentences(self, topic_number = None, num_docs=5,):
+    def search_docs_by_topic(self, topic_number = None, num_docs=5,):
         """
         Retrieves the top n sentences for each cluster based on cosine similarity to the cluster centroid.
         
