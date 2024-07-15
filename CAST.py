@@ -680,17 +680,18 @@ class CAST:
         return top_centroids
 
 
-    def get_top_n_sentences(self, nr_sentences=5, topic_number = None):
+    def get_top_n_sentences(self, topic_number = None, num_docs=5,):
         """
         Retrieves the top n sentences for each cluster based on cosine similarity to the cluster centroid.
         
         Parameters:
-        nr_sentences (int, default=5): Number of top sentences to retrieve for each cluster.
-        cluster_number (int, optional): Specific cluster number to retrieve sentences from. Defaults to None. 
-            If it is None, it will return the top sentences for all clusters.
+        topic_number (int, optional): Specific topic number to retrieve sentences from. Defaults to None. 
+            If it is None, it will return the top sentences for all topics.
+        
+        num_docs (int, default=5): Number of top sentences to retrieve for each cluster.
         
         Returns:
-        dict: A dictionary with cluster labels as keys and lists of top sentences as values.
+        dict: A dictionary with topic numbers, topic sizes, and lists of top sentences as values.
         """
         
         cluster_data = []
@@ -709,7 +710,7 @@ class CAST:
                 sentence_similarity_pairs = sorted(zip(sentences, similarities), key=lambda x: x[1], reverse=True)
 
                 # Select the top n sentences
-                top_sentences = [sentence for sentence, _ in sentence_similarity_pairs[:nr_sentences]]
+                top_sentences = [sentence for sentence, _ in sentence_similarity_pairs[:num_docs]]
 
                 cluster_data.append({
                     'Topic': cluster,
@@ -731,7 +732,7 @@ class CAST:
 
             sentence_similarity_pairs = sorted(zip(sentences, similarities), key=lambda x: x[1], reverse=True)
 
-            top_sentences = [sentence for sentence, _ in sentence_similarity_pairs[:nr_sentences]]
+            top_sentences = [sentence for sentence, _ in sentence_similarity_pairs[:num_docs]]
 
             cluster_data.append({
                 'Topic': topic_number,
