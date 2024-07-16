@@ -56,7 +56,7 @@ Inspired by the findings in contrastive learning that functional tokens have few
 
 ## Basic Usage
 
-Here's a basic example of how to use CAST using the benchmark 20NewsGroup dataset:
+Here's a basic example of using CAST to identify topic words on the benchmark 20NewsGroup dataset:
 
 ```python
 
