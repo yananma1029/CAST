@@ -122,10 +122,10 @@ print(top_sen)
 ```
 
 ## Sentiment analysis
-You can use `.sentiment_analysis_by_topic` to conduct the sentiment analysis for a specific `topic_number`. Setting `topic_number = None` will return sentences for all the clusters. We use social media data instead of the 20NewsGroup to demonstrate this function because the sentiment expressed on social media tends to be more varied and subjective, whereas news articles are generally more objective.
+You can use `.sentiment_analysis_by_topic` to conduct the sentiment analysis for a specific `topic_number`. Setting `topic_number = None` will return sentences for all the clusters. 
 
 ```python
-positive_sen, negtive_sen = model.sentiment_analysis_by_topic(topic_number=1, num_docs=5) 
+positive_sen, negtive_sen = model.sentiment_analysis_by_topic(topic_number=0, num_docs=5) 
 ```
 Returns:
 - `top_positive_sentences`: A dictionary where keys are topic numbers and values are lists of tuples with top positive sentences and their sentiment scores.
@@ -140,7 +140,7 @@ for topic, sens in positive_sen.items():
         print (f" {sen}")
 
 print('Negative:')
-for topic, sen in negtive_sen.items():
+for topic, sens in negtive_sen.items():
     print(f"Topic: {topic}")
     for sen in sens:
         print (f" {sen}")
@@ -148,20 +148,20 @@ for topic, sen in negtive_sen.items():
 
 ```python
 Positive:
- Topic: 1
- ('excellent news rob m a type diabetic and m hope to get my vaccine around marchapril time', 1.0)
- ('good be get a rd shot soon bc have type diabetes amp addison s disease and despite be an athletic teenager my immune system be like a cranky old man refuse to get up out of his recliner and do its part', 0.4)
- ('beside live with type diabete for almost year be a healthy yearold college student so be beyond bless to receive the vaccine read more about maguire student blogger s experience receive her covid vaccine here', 0.38)
- ('tripleboosted wife be a covid nurse we be mask consistently have and so far so good no covid', 0.35)
- ('i have a mild case in june but call my dr s office for paxlovid bc have addison s amp type diabetes be tell qualify bc of those condition but bc of they would need to go to the er to get the med despite be contagious amp there be a hour wait in the waiting room', 0.33)
+ Topic: 0
+ ('great history hit great great', 0.8)
+ ('make deal specifically win playoff series fault win win playoff series year find show', 0.8)
+ ('tie rule win win win series advance opinion concern', 0.8)
+ ('accord fan win didn mention goal pick', 0.8)
+ ('finish great win player contribute great win player include skill show art sport speech corner', 0.8)
 
 Negative:
-Topic: 1
- ('excellent news rob m a type diabetic and m hope to get my vaccine around marchapril time', 1.0)
- ('good be get a rd shot soon bc have type diabetes amp addison s disease and despite be an athletic teenager my immune system be like a cranky old man refuse to get up out of his recliner and do its part', 0.4)
- ('beside live with type diabete for almost year be a healthy yearold college student so be beyond bless to receive the vaccine read more about maguire student blogger s experience receive her covid vaccine here', 0.38)
- ('tripleboosted wife be a covid nurse we be mask consistently have and so far so good no covid', 0.35)
- ('i have a mild case in june but call my dr s office for paxlovid bc have addison s amp type diabetes be tell qualify bc of those condition but bc of they would need to go to the er to get the med despite be contagious amp there be a hour wait in the waiting room', 0.33)
+Topic: 0
+ ('pick develop bad player baseball', -0.7)
+ ('people run guy send stupid people guy advance track', -0.8)
+ ('depend make attempt avoid hit base ball rule hit', -0.8)
+ ('understand question rule automatically force advance base ball catch situation base force base drop ball ball catch run decide stay ball drop leave base time', -0.8)
+ ('hell base steal team call error place bet call post joke care fan change parent', -0.8)
 ```
 
 
