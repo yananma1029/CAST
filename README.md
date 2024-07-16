@@ -86,22 +86,22 @@ Run the topic modelling pipeline to find topics
 ```python
 topics = topic_model.pipeline()
 ```
-After this, we are going to print out the results
+After this, we are going to print out the topic words for each topic
 ```python
 for topic_id, words in topics.items():
     print(f"Topic {topic_id}: {', '.join(words)}")
-```
-```python
-Cluster 0: game score team play player season league shot goal tie
-Cluster 1: patient medical treat treatment medicine doctor disease health hospital sick
-Cluster 2: secure security encrypt scheme key secret ensure protect privacy clipper
-Cluster 3: car engine auto vehicle rear dealer motor brake mile gear
-Cluster 4: monitor vga video card screen display graphic hardware mode slot
-Cluster 5: launch mission space orbit flight rocket satellite solar moon shuttle
-Cluster 6: occupy israeli territory arab jewish soldier land peace civilian village
-Cluster 7: gun firearm weapon shoot armed violent bullet criminal assault batf
-Cluster 8: gay homosexual homosexuality sexual male sex behavior man adult woman
-Cluster 9: village armenian turkish soldier army foreign russian soviet occupy organize
+
+>>>
+Topic 0: game score team play player season league shot goal tie
+Topic 1: patient medical treat treatment medicine doctor disease health hospital sick
+Topic 2: secure security encrypt scheme key secret ensure protect privacy clipper
+Topic 3: car engine auto vehicle rear dealer motor brake mile gear
+Topic 4: monitor vga video card screen display graphic hardware mode slot
+Topic 5: launch mission space orbit flight rocket satellite solar moon shuttle
+Topic 6: occupy israeli territory arab jewish soldier land peace civilian village
+Topic 7: gun firearm weapon shoot armed violent bullet criminal assault batf
+Topic 8: gay homosexual homosexuality sexual male sex behavior man adult woman
+Topic 9: village armenian turkish soldier army foreign russian soviet occupy organize
 ```
 ## Get top_n_sentences associated with the topics
 After running the `.pipeline`, we are going to use `.search_docs_by_topic` to get the top_n_sentences associated with the topics. You can specify a `topic_number`, or set `topic_number = None` to get the top_n_sentences for all the topics.
@@ -110,11 +110,11 @@ After running the `.pipeline`, we are going to use `.search_docs_by_topic` to ge
 top_sen = model.search_docs_by_topic(topic_number = None, num_docs=10)
 ```
 
-Print out the results
+We are going to print out the topic, topic_size and the top_sentences for each topic
 ```python
 print(top_sen)
-```
-```python
+
+>>>
    Topic  Count                                      Top_Sentences
 0      0   1476  [straight game score late run run yesterday pi...
 1      1    459  [provide advice concern follow health problem ...
@@ -138,7 +138,7 @@ Returns:
 - `top_positive_sentences`: A dictionary where keys are topic numbers and values are lists of tuples with top positive sentences and their sentiment scores.
 - `top_negative_sentences`: A dictionary where keys are topic numbers and values are lists of tuples with top negative sentences and their sentiment scores.
 
-Print out the results:
+We are going to print out the top_positive_sentences and top_negative_sentences for topic 0
 ```python
 print('Positive:')
 for topic, sens in positive_sen.items():
