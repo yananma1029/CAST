@@ -85,10 +85,13 @@ Run the topic modelling pipeline to find topics
 
 ```python
 topics = topic_model.pipeline()
-
+```
+After this, we are going to print out the results
+```python
 for topic_id, words in topics.items():
     print(f"Topic {topic_id}: {', '.join(words)}")
-
+```
+```python
 >>>
 Cluster 0: game score team play player season league shot goal tie
 Cluster 1: patient medical treat treatment medicine doctor disease health hospital sick
@@ -102,11 +105,14 @@ Cluster 8: gay homosexual homosexuality sexual male sex behavior man adult woman
 Cluster 9: village armenian turkish soldier army foreign russian soviet occupy organize
 ```
 ## Get top_n_sentences associated with the topics
-After running the `.pipeline` you can use `.search_docs_by_topic` to get the top_n_sentences associated with the topics. You can specify a `topic_number`, or set `topic_number = None` to get the top_n_sentences for all the topics.
+After running the `.pipeline`, we are going to use `.search_docs_by_topic` to get the top_n_sentences associated with the topics. You can specify a `topic_number`, or set `topic_number = None` to get the top_n_sentences for all the topics.
 
 ```python
 top_sen = model.search_docs_by_topic(topic_number = None, num_docs=10)
 print(top_sen)
+```
+
+```python
 >>>
    Topic  Count                                      Top_Sentences
 0      0   1476  [straight game score late run run yesterday pi...
@@ -122,7 +128,7 @@ print(top_sen)
 ```
 
 ## Sentiment analysis
-You can use `.sentiment_analysis_by_topic` to conduct the sentiment analysis for a specific `topic_number`. Setting `topic_number = None` will return sentences for all the clusters. 
+We are going to use `.sentiment_analysis_by_topic` to conduct the sentiment analysis for a specific `topic_number`. Setting `topic_number = None` will return sentences for all the clusters. 
 
 ```python
 positive_sen, negtive_sen = model.sentiment_analysis_by_topic(topic_number=0, num_docs=5) 
