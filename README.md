@@ -56,7 +56,7 @@ Inspired by the findings in contrastive learning that functional tokens have few
 
 ## Basic Usage
 
-Here's a basic example of how to use CAST using the benchmark 20NewsGroup dataset:
+Here's an example of using CAST to identify topic words on the benchmark 20NewsGroup dataset:
 
 ```python
 
@@ -85,27 +85,35 @@ Run the topic modelling pipeline to find topics
 
 ```python
 topics = topic_model.pipeline()
-
+```
+After this, we are going to print out the topic words for each topic
+```python
 for topic_id, words in topics.items():
     print(f"Topic {topic_id}: {', '.join(words)}")
 
 >>>
-Cluster 0: game score team play player season league shot goal tie
-Cluster 1: patient medical treat treatment medicine doctor disease health hospital sick
-Cluster 2: secure security encrypt scheme key secret ensure protect privacy clipper
-Cluster 3: car engine auto vehicle rear dealer motor brake mile gear
-Cluster 4: monitor vga video card screen display graphic hardware mode slot
-Cluster 5: launch mission space orbit flight rocket satellite solar moon shuttle
-Cluster 6: occupy israeli territory arab jewish soldier land peace civilian village
-Cluster 7: gun firearm weapon shoot armed violent bullet criminal assault batf
-Cluster 8: gay homosexual homosexuality sexual male sex behavior man adult woman
-Cluster 9: village armenian turkish soldier army foreign russian soviet occupy organize
+Topic 0: game score team play player season league shot goal tie
+Topic 1: patient medical treat treatment medicine doctor disease health hospital sick
+Topic 2: secure security encrypt scheme key secret ensure protect privacy clipper
+Topic 3: car engine auto vehicle rear dealer motor brake mile gear
+Topic 4: monitor vga video card screen display graphic hardware mode slot
+Topic 5: launch mission space orbit flight rocket satellite solar moon shuttle
+Topic 6: occupy israeli territory arab jewish soldier land peace civilian village
+Topic 7: gun firearm weapon shoot armed violent bullet criminal assault batf
+Topic 8: gay homosexual homosexuality sexual male sex behavior man adult woman
+Topic 9: village armenian turkish soldier army foreign russian soviet occupy organize
 ```
-Using `.get_top_n_sentences` you can get the top_n_sentences associated with the topics. You can specify a `topic_number`, or set `topic_number = None` to get the top_n_sentences for all the topics.
+## Get top_n_sentences associated with the topics
+After running the `.pipeline`, we are going to use `.search_docs_by_topic` to get the top_n_sentences associated with the topics. You can specify a `topic_number`, or set `topic_number = None` to get the top_n_sentences for all the topics.
 
 ```python
-top_sen = model.get_top_n_sentences(topic_number = None, num_docs=10)
+top_sen = model.search_docs_by_topic(topic_number = None, num_docs=10)
+```
+
+We are going to print out the topic, topic_size and the top_sentences for each topic
+```python
 print(top_sen)
+
 >>>
    Topic  Count                                      Top_Sentences
 0      0   1476  [straight game score late run run yesterday pi...
@@ -118,6 +126,49 @@ print(top_sen)
 7      7    247  [survey show public type gun control acceptabl...
 8      8    207  [recent study show number man engage homosexua...
 9      9    183  [convince sense world cold participate turkish...
+```
+
+## Sentiment analysis
+We are going to use `.sentiment_analysis_by_topic` to conduct the sentiment analysis for a specific `topic_number`. Setting `topic_number = None` will return sentences for all the clusters. 
+
+```python
+positive_sen, negtive_sen = model.sentiment_analysis_by_topic(topic_number=0, num_docs=5) 
+```
+Returns:
+- `top_positive_sentences`: A dictionary where keys are topic numbers and values are lists of tuples with top positive sentences and their sentiment scores.
+- `top_negative_sentences`: A dictionary where keys are topic numbers and values are lists of tuples with top negative sentences and their sentiment scores.
+
+We are going to print out the top_positive_sentences and top_negative_sentences for topic 0
+```python
+print('Positive:')
+for topic, sens in positive_sen.items():
+    print(f" Topic: {topic}")
+    for sen in sens:
+        print (f" {sen}")
+
+print('Negative:')
+for topic, sens in negtive_sen.items():
+    print(f"Topic: {topic}")
+    for sen in sens:
+        print (f" {sen}")
+```
+
+```python
+Positive:
+ Topic: 0
+ ('great history hit great great', 0.8)
+ ('make deal specifically win playoff series fault win win playoff series year find show', 0.8)
+ ('tie rule win win win series advance opinion concern', 0.8)
+ ('accord fan win didn mention goal pick', 0.8)
+ ('finish great win player contribute great win player include skill show art sport speech corner', 0.8)
+
+Negative:
+Topic: 0
+ ('pick develop bad player baseball', -0.7)
+ ('people run guy send stupid people guy advance track', -0.8)
+ ('depend make attempt avoid hit base ball rule hit', -0.8)
+ ('understand question rule automatically force advance base ball catch situation base force base drop ball ball catch run decide stay ball drop leave base time', -0.8)
+ ('hell base steal team call error place bet call post joke care fan change parent', -0.8)
 ```
 
 
