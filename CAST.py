@@ -28,6 +28,7 @@ import time
 from sklearn.preprocessing import normalize
 from sklearn.cluster import AgglomerativeClustering
 from collections import defaultdict
+from textblob import TextBlob
 
 
 logger = logging.getLogger('CAST')
@@ -685,13 +686,15 @@ class CAST:
         Retrieves the top n sentences for each cluster based on cosine similarity to the cluster centroid.
         
         Parameters:
+        -----------
         topic_number (int, optional): Specific topic number to retrieve sentences from. Defaults to None. 
             If it is None, it will return the top sentences for all topics.
         
         num_docs (int, default=5): Number of top sentences to retrieve for each cluster.
         
         Returns:
-        dict: A dictionary with topic numbers, topic sizes, and lists of top sentences as values.
+        --------
+        A dataframe with topic numbers, topic sizes, and lists of top sentences as columns.
         """
         
         cluster_data = []
@@ -743,6 +746,79 @@ class CAST:
         df = pd.DataFrame(cluster_data, columns=['Topic', 'Count', 'Top_Sentences'])
 
         return df
+
+    def sentiment_analysis_by_topic(self, topic_number=None, num_docs=5):
+        
+        """
+            Retrieves the top sentences for each cluster based on sentiment scores using TextBlob.
+            
+            Parameters:
+            ----------
+            topic_number : int, optional
+                Specific topic number to retrieve sentences from. Defaults to None.
+                If None, the function will return the top sentences for all topics.
+            
+            num_docs : int, default=5
+                Number of top positive and negative sentences to retrieve for each cluster.
+            
+            Returns:
+            -------
+            tuple
+                A tuple containing two dictionaries:
+                - `top_positive_sentences`: A dictionary where keys are topic numbers and values are lists of tuples 
+                with top positive sentences and their sentiment scores.
+                - `top_negative_sentences`: A dictionary where keys are topic numbers and values are lists of tuples 
+                with top negative sentences and their sentiment scores.
+            
+            Example:
+            -------
+            >>> top_pos, top_neg = sentiment_analysis_by_topic(topic_number=1, num_docs=3)
+            >>> print(top_pos)
+            {1: [('This is a great product.', 0.8), ('I love this!', 0.7), ('Very satisfied with the purchase.', 0.6)]}
+            >>> print(top_neg)
+            {1: [('This is terrible.', -0.8), ('I hate it.', -0.7), ('Not happy with the product.', -0.6)]}
+        """
+    
+        
+        top_positive_sentences = {}
+        top_negative_sentences = {}
+
+        if topic_number is None: 
+            
+            for cluster, centroid in self.top_centroids.items():
+                cluster_df = self.document_vector[self.document_vector['label'] == cluster]
+                sentences = cluster_df['text'].tolist()
+
+                # Compute sentiment scores for each sentence using TextBlob
+                sentiment_scores = [TextBlob(sentence).sentiment.polarity for sentence in sentences]
+
+                # Pair sentences with their sentiment scores and sort by sentiment score in descending order
+                sentence_sentiment_pairs = sorted(zip(sentences, sentiment_scores), key=lambda x: x[1], reverse=True)
+
+                # Select the top n positive and negative sentences
+                top_positive_sentences[cluster] = [(sentence, round(p_score, 2)) for sentence, p_score in sentence_sentiment_pairs[:num_docs]]
+                top_negative_sentences[cluster] = [(sentence, round(n_score, 2)) for sentence, n_score in sentence_sentiment_pairs[-num_docs:]]
+
+        else:
+            if topic_number not in self.top_centroids:
+                logger.warning("Please enter a valid cluster")
+                return
+            
+            cluster_df = self.document_vector[self.document_vector['label'] == topic_number]
+            sentences = cluster_df['text'].tolist()
+
+            # Compute sentiment scores for each sentence using TextBlob
+            sentiment_scores = [TextBlob(sentence).sentiment.polarity for sentence in sentences]
+
+            # Pair sentences with their sentiment scores and sort by sentiment score in descending order
+            sentence_sentiment_pairs = sorted(zip(sentences, sentiment_scores), key=lambda x: x[1], reverse=True)
+
+            # Select the top n positive and negative sentences
+            top_positive_sentences[topic_number] = [(sentence, round(p_score, 2)) for sentence, p_score in sentence_sentiment_pairs[:num_docs]]
+            top_negative_sentences[topic_number] = [(sentence, round(n_score, 2)) for sentence, n_score in sentence_sentiment_pairs[-num_docs:]]
+    
+
+        return top_positive_sentences, top_negative_sentences
 
 
     def get_topic_words(self, embeddings, centroids):
