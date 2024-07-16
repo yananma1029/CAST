@@ -92,7 +92,6 @@ for topic_id, words in topics.items():
     print(f"Topic {topic_id}: {', '.join(words)}")
 ```
 ```python
->>>
 Cluster 0: game score team play player season league shot goal tie
 Cluster 1: patient medical treat treatment medicine doctor disease health hospital sick
 Cluster 2: secure security encrypt scheme key secret ensure protect privacy clipper
@@ -109,11 +108,13 @@ After running the `.pipeline`, we are going to use `.search_docs_by_topic` to ge
 
 ```python
 top_sen = model.search_docs_by_topic(topic_number = None, num_docs=10)
-print(top_sen)
 ```
 
+Print out the results
 ```python
->>>
+print(top_sen)
+```
+```python
    Topic  Count                                      Top_Sentences
 0      0   1476  [straight game score late run run yesterday pi...
 1      1    459  [provide advice concern follow health problem ...
