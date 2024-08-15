@@ -163,9 +163,8 @@ for topic, data in sentiment_results.items():
     print(f"  Positive Ratio: {data['positive_ratio']}")
     print(f"  Neutral Ratio: {data['neutral_ratio']}")
     print(f"  Negative Ratio: {data['negative_ratio']}")
-```
+
 >>>
-```python
 Topic 0:
 ----------------------------------------
 
@@ -175,13 +174,6 @@ Top Positive Sentences:
   ('tie rule win win win series advance opinion concern', 0.8)
   ('accord fan win didn mention goal pick', 0.8)
   ('finish great win player contribute great win player include skill show art sport speech corner', 0.8)
-
-Top Neutral Sentences:
-  ('think yrs know correct hypo go second', 0.0)
-  ('recent twitter meme', 0.0)
-  ('today day emoji emoji trialle insight pump week today hopefully like go', 0.0)
-  ('diabuddy i m fourteen i ve diabete diagnose wander diabetic like diabetic friend diabuddies n nplease pm', 0.0)
-  ('t friend emoji get diagnose month ago know anybody diabete friend group family wonder anybody want diabuddy get insta snapchat xx', 0.0)
 
 Top Negative Sentences:
   ('pick develop bad player baseball', -0.7)
