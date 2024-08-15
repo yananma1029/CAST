@@ -147,7 +147,7 @@ A dictionary where keys are topic numbers, and values are dictionaries containin
 We are going to print out the top_positive_sentences and top_negative_sentences for topic 0
 ```python
 for topic, data in sentiment_results.items():
-    print(f"\nTopic {topic}:")
+    print(f"Topic {topic}:")
     print("-" * 40)
     
     print("\nTop Positive Sentences:")
@@ -167,7 +167,6 @@ for topic, data in sentiment_results.items():
 >>>
 Topic 0:
 ----------------------------------------
-
 Top Positive Sentences:
   ('great history hit great great', 0.8)
   ('make deal specifically win playoff series fault win win playoff series year find show', 0.8)
