@@ -132,43 +132,73 @@ print(top_sen)
 We are going to use `.sentiment_analysis_by_topic` to conduct the sentiment analysis for a specific `topic_number`. Setting `topic_number = None` will return sentences for all the clusters. 
 
 ```python
-positive_sen, negtive_sen = model.sentiment_analysis_by_topic(topic_number=0, num_docs=5) 
+sentiment_results = model.sentiment_analysis_by_topic(topic_number=0, num_docs=5) 
 ```
 Returns:
-- `top_positive_sentences`: A dictionary where keys are topic numbers and values are lists of tuples with top positive sentences and their sentiment scores.
-- `top_negative_sentences`: A dictionary where keys are topic numbers and values are lists of tuples with top negative sentences and their sentiment scores.
+A dictionary where keys are topic numbers, and values are dictionaries containing:
+- `top_positive_sentences`: List of top positive sentences with their scores.
+- `top_negative_sentences`: List of top negative sentences with their scores.
+- `top_neutral_sentences`: List of some neutral sentences examples.
+- `avg_sentiment`: Average sentiment score for the topic.
+- `positive_ratio`: Ratio of positive sentences.
+- `neutral_ratio`: Ratio of neutral sentences.
+- `negative_ratio`: Ratio of negative sentences.
 
 We are going to print out the top_positive_sentences and top_negative_sentences for topic 0
 ```python
-print('Positive:')
-for topic, sens in positive_sen.items():
-    print(f" Topic: {topic}")
-    for sen in sens:
-        print (f" {sen}")
-
-print('Negative:')
-for topic, sens in negtive_sen.items():
-    print(f"Topic: {topic}")
-    for sen in sens:
-        print (f" {sen}")
+for topic, data in sentiment_results.items():
+    print(f"\nTopic {topic}:")
+    print("-" * 40)
+    
+    print("\nTop Positive Sentences:")
+    for sentence, score in data['top_positive_sentences']:
+        print(f"  ('{sentence}', {score})")
+    
+    print("\nTop Neutral Sentences:")
+    for sentence, score in data['top_neutral_sentences']:
+        print(f"  ('{sentence}', {score})")
+    
+    print("\nTop Negative Sentences:")
+    for sentence, score in data['top_negative_sentences']:
+        print(f"  ('{sentence}', {score})")
+    
+    print("\nSentiment Statistics:")
+    print(f"  Average Sentiment Score: {data['avg_sentiment']}")
+    print(f"  Positive Ratio: {data['positive_ratio']}")
+    print(f"  Neutral Ratio: {data['neutral_ratio']}")
+    print(f"  Negative Ratio: {data['negative_ratio']}")
 ```
 
 ```python
-Positive:
- Topic: 0
- ('great history hit great great', 0.8)
- ('make deal specifically win playoff series fault win win playoff series year find show', 0.8)
- ('tie rule win win win series advance opinion concern', 0.8)
- ('accord fan win didn mention goal pick', 0.8)
- ('finish great win player contribute great win player include skill show art sport speech corner', 0.8)
+Topic 0:
+----------------------------------------
 
-Negative:
-Topic: 0
- ('pick develop bad player baseball', -0.7)
- ('people run guy send stupid people guy advance track', -0.8)
- ('depend make attempt avoid hit base ball rule hit', -0.8)
- ('understand question rule automatically force advance base ball catch situation base force base drop ball ball catch run decide stay ball drop leave base time', -0.8)
- ('hell base steal team call error place bet call post joke care fan change parent', -0.8)
+Top Positive Sentences:
+  ('happy bob app anybody use happy bob make group', 0.8)
+  ('hello hey megan diagnose know diabetes hope maybe meet people personally interesting understand one interested use friend diabete fussy age good', 0.48)
+  ('diabetes chat hey sarah people comment love able talk diabete feel free ask question xx n nsent diabetes forum app', 0.47)
+  ('look diabetic friend hi ruby type diabete nearly month look talk to ni greatly appreciate like chat friend n nruby x', 0.45)
+  ('meet up ect london wonder new kind meet up event london area able find n n n nsent diabetes forum app', 0.41)
+
+Top Neutral Sentences:
+  ('think yrs know correct hypo go second', 0.0)
+  ('recent twitter meme', 0.0)
+  ('today day emoji emoji trialle insight pump week today hopefully like go', 0.0)
+  ('diabuddy i m fourteen i ve diabete diagnose wander diabetic like diabetic friend diabuddies n nplease pm', 0.0)
+  ('t friend emoji get diagnose month ago know anybody diabete friend group family wonder anybody want diabuddy get insta snapchat xx', 0.0)
+
+Top Negative Sentences:
+  ('hiya emoji hi diagnose week ago t d look friend age grateful tip bg test hate', -0.8)
+  ('desperate need ero message', -0.6)
+  ('friend want hello n ni m type diagnose month bit ago need friend go similar friend understand annoying n nif want touch message email n nabi x', -0.4)
+  ('struggle diabetes lately emoji year school mock come try revise experience want test needle anymore tired diabete', -0.35)
+  ('type hi dignose type th january ve find difficult come term fact m diabetic constantly feel like outsider m look friend speak diabetes understanding', -0.25)
+
+Sentiment Statistics:
+  Average Sentiment Score: 0.09
+  Positive Ratio: 0.44
+  Neutral Ratio: 0.44
+  Negative Ratio: 0.12
 ```
 
 
