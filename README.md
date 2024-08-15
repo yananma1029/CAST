@@ -129,7 +129,7 @@ print(top_sen)
 ```
 
 ## Sentiment analysis
-We are going to use `.sentiment_analysis_by_topic` to conduct the sentiment analysis for a specific `topic_number`. Setting `topic_number = None` will return sentences for all the clusters. CAST supports two models to conduct sentiment analysis: TextBolt and VADER.
+We are going to use `.sentiment_analysis_by_topic` to conduct the sentiment analysis for a specific `topic_number`. Setting `topic_number = None` will return sentences for all the clusters. CAST supports two models for conducting sentiment analysis: model = 'TextBolt' or 'VADER'.
 
 ```python
 sentiment_results = model.sentiment_analysis_by_topic(topic_number=0, num_docs=5, model= 'TextBolt') 
