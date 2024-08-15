@@ -154,10 +154,6 @@ for topic, data in sentiment_results.items():
     for sentence, score in data['top_positive_sentences']:
         print(f"  ('{sentence}', {score})")
     
-    print("\nTop Neutral Sentences:")
-    for sentence, score in data['top_neutral_sentences']:
-        print(f"  ('{sentence}', {score})")
-    
     print("\nTop Negative Sentences:")
     for sentence, score in data['top_negative_sentences']:
         print(f"  ('{sentence}', {score})")
@@ -168,17 +164,17 @@ for topic, data in sentiment_results.items():
     print(f"  Neutral Ratio: {data['neutral_ratio']}")
     print(f"  Negative Ratio: {data['negative_ratio']}")
 ```
-
+>>>
 ```python
 Topic 0:
 ----------------------------------------
 
 Top Positive Sentences:
-  ('happy bob app anybody use happy bob make group', 0.8)
-  ('hello hey megan diagnose know diabetes hope maybe meet people personally interesting understand one interested use friend diabete fussy age good', 0.48)
-  ('diabetes chat hey sarah people comment love able talk diabete feel free ask question xx n nsent diabetes forum app', 0.47)
-  ('look diabetic friend hi ruby type diabete nearly month look talk to ni greatly appreciate like chat friend n nruby x', 0.45)
-  ('meet up ect london wonder new kind meet up event london area able find n n n nsent diabetes forum app', 0.41)
+  ('great history hit great great', 0.8)
+  ('make deal specifically win playoff series fault win win playoff series year find show', 0.8)
+  ('tie rule win win win series advance opinion concern', 0.8)
+  ('accord fan win didn mention goal pick', 0.8)
+  ('finish great win player contribute great win player include skill show art sport speech corner', 0.8)
 
 Top Neutral Sentences:
   ('think yrs know correct hypo go second', 0.0)
@@ -188,11 +184,11 @@ Top Neutral Sentences:
   ('t friend emoji get diagnose month ago know anybody diabete friend group family wonder anybody want diabuddy get insta snapchat xx', 0.0)
 
 Top Negative Sentences:
-  ('hiya emoji hi diagnose week ago t d look friend age grateful tip bg test hate', -0.8)
-  ('desperate need ero message', -0.6)
-  ('friend want hello n ni m type diagnose month bit ago need friend go similar friend understand annoying n nif want touch message email n nabi x', -0.4)
-  ('struggle diabetes lately emoji year school mock come try revise experience want test needle anymore tired diabete', -0.35)
-  ('type hi dignose type th january ve find difficult come term fact m diabetic constantly feel like outsider m look friend speak diabetes understanding', -0.25)
+  ('pick develop bad player baseball', -0.7)
+  ('people run guy send stupid people guy advance track', -0.8)
+  ('depend make attempt avoid hit base ball rule hit', -0.8)
+  ('understand question rule automatically force advance base ball catch situation base force base drop ball ball catch run decide stay ball drop leave base time', -0.8)
+  ('hell base steal team call error place bet call post joke care fan change parent', -0.8)
 
 Sentiment Statistics:
   Average Sentiment Score: 0.09
