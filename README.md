@@ -9,6 +9,8 @@
 
 >Two modules to identify meaningful candidate topic words. Module 1: word embeddings contextualized on the dataset. Module 2: self-similarity scores to filter out functional words. Purple points are documents with semantically similar documents clustered together. Higher-scoring words (green) are served as meaningful candidate topic words (green points) and assigned to their closet clusters.
 
+<!--
+
 ### Word embeddings contextualized on the dataset
 
 In this model, word embeddings are encoded based on their **context** within the documents, instead of **statically encoded** in the general domain as standalone tokens. In this case, the embedding for the word "bank" would differ when it appears in the context of a financial institution versus a riverbank.
@@ -29,7 +31,7 @@ Inspired by the findings in contrastive learning that functional tokens have few
 </p>
 
 > An optimal range of self-similarity scores can increase topic coherence (TC) and topic diversity (TD), but excessively high thresholds may filter out meaningful words, thereby reducing TC and TD. LLM refers to large language model based metrics.
-
+-->
 ## Features
 
 - Utilizes pre-trained transformer models for high-quality text embeddings
