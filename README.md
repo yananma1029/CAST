@@ -174,11 +174,11 @@ for topic, data in sentiment_results.items():
 Topic 0:
 ----------------------------------------
 Top Positive Sentences:
-  ('great history hit great great', 0.8)
-  ('make deal specifically win playoff series fault win win playoff series year find show', 0.8)
-  ('tie rule win win win series advance opinion concern', 0.8)
-  ('accord fan win didn mention goal pick', 0.8)
-  ('finish great win player contribute great win player include skill show art sport speech corner', 0.8)
+  ('great hear trip year time age post good bill form limited coverage great season', 0.96)
+  ('small defense sale size pen work pretty good hear', 0.96)
+  ('love coverage production excellent excellent modern time hear great request leave hope lead regular season contract guess game playoff canadian pick canadian thing btw', 0.96)
+  ('baseball school people game week score run carry hope hold yesterday score high great site kick enjoy game', 0.96)
+  ('kind happy smoke share good great modern put good history baseball silly totally line', 0.95)
 
 Top Neutral Sentences:
   ('report today agreement season pick choice year deal sign round pick play playoff', 0.95)
@@ -187,18 +187,18 @@ Top Neutral Sentences:
   ('hear brother week today finish reading post regard read game play week ago mention join mailing list enter score plug read rest post spring training', 0.93)
   ('note fuel fact local owner purchase back original owner remain due contract pay channel team half dozen local cross surprised deal season', 0.93)
 
-Top Negative Sentences:
-  ('pick develop bad player baseball', -0.7)
-  ('people run guy send stupid people guy advance track', -0.8)
-  ('depend make attempt avoid hit base ball rule hit', -0.8)
-  ('understand question rule automatically force advance base ball catch situation base force base drop ball ball catch run decide stay ball drop leave base time', -0.8)
-  ('hell base steal team call error place bet call post joke care fan change parent', -0.8)
+Top Negative Sentences: 
+  ('agree suck big time thing night game', 0.96)
+  ('baseball time die charge wife car tree carry firearm car report hear read watch lot game writing line stupid hurt team raise question print area question action article point kill people live quote stupid', 0.95)
+  ('agree screw damn agreement show hockey game lose fan quickly decision', 0.95)
+  ('shit final couple year ago shit fan', 0.94)
+  ('watch watch stone watch suck watch', 0.92)
 
 Sentiment Statistics:
   Average Sentiment Score: 0.09
-  Positive Ratio: 0.44
-  Neutral Ratio: 0.44
-  Negative Ratio: 0.12
+  Positive Ratio: 0.22
+  Neutral Ratio: 0.68
+  Negative Ratio: 0.1
 ```
 
 
