@@ -155,6 +155,10 @@ for topic, data in sentiment_results.items():
     print("\nTop Positive Sentences:")
     for sentence, score in data['top_positive_sentences']:
         print(f"  ('{sentence}', {score})")
+
+    print("\nTop Neutral Sentences:")
+    for sentence, score in data['top_neutral_sentences']:
+        print(f"  ('{sentence}', {score})")
     
     print("\nTop Negative Sentences:")
     for sentence, score in data['top_negative_sentences']:
@@ -175,6 +179,13 @@ Top Positive Sentences:
   ('tie rule win win win series advance opinion concern', 0.8)
   ('accord fan win didn mention goal pick', 0.8)
   ('finish great win player contribute great win player include skill show art sport speech corner', 0.8)
+
+Top Neutral Sentences:
+  ('report today agreement season pick choice year deal sign round pick play playoff', 0.95)
+  ('commit game originally schedule net knowledge release schedule announce', 0.94)
+  ('draft choice assume play round pick entry draft notice summary begin play playoff', 0.93)
+  ('hear brother week today finish reading post regard read game play week ago mention join mailing list enter score plug read rest post spring training', 0.93)
+  ('note fuel fact local owner purchase back original owner remain due contract pay channel team half dozen local cross surprised deal season', 0.93)
 
 Top Negative Sentences:
   ('pick develop bad player baseball', -0.7)
