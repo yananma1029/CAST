@@ -4,7 +4,7 @@
 
 
 <p align="center">
-    <img src="https://github.com/amazingmatthew/CAST/blob/main/images/CAST.png?sanitize=true" alt="" width=800 height="whatever">
+    <img src="https://github.com/amazingmatthew/CAST/blob/main/images/CAST.png?sanitize=true" alt="" width=700 height="whatever">
 </p>
 
 >Two modules to identify meaningful candidate topic words. Module 1: word embeddings contextualized on the dataset. Module 2: self-similarity scores to filter out functional words. Purple points represent documents, with semantically similar ones clustered together. Words with higher self-similarity scores (green) are selected over those with lower scores and assigned to their closest cluster centroid (topic vector: yellow point) as topic words (green points), rather than relying on general-domain topic words (red points).
@@ -29,8 +29,9 @@ Inspired by the findings in contrastive learning that functional tokens have few
     <img src="https://github.com/amazingmatthew/CAST/blob/main/images/ablation.png?sanitize=true" alt="" width=600 height="whatever">
 </p>
 
-> Above is the ablation study of self-similarity scores. An optimal range of self-similarity scores can increase topic coherence (TC) and topic diversity (TD), but excessively high thresholds may filter out meaningful words, thereby reducing TC and TD. LLM refers to large language model based metrics.
--->
+> Above is the ablation study of self-similarity scores. An optimal range of self-similarity scores can increase topic coherence (TC) and topic diversity (TD), but excessively high thresholds may filter out meaningful words, thereby reducing TC and TD. LLM refers to large language model-based metrics.
+
+
 ## Features
 
 - Utilizes pre-trained transformer models for high-quality text embeddings
@@ -40,7 +41,7 @@ Inspired by the findings in contrastive learning that functional tokens have few
 - Applies UMAP for dimensionality reduction
 - Uses HDBSCAN for density-based clustering
 - Calculates self-similarity scores for word filtering
-- Supports customizable number of topics
+- Supports a customizable number of topics
 
 ## Requirements
 
