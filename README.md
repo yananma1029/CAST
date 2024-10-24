@@ -156,7 +156,7 @@ print(top_sen)
 
 ## Sentiment analysis
 We are going to use `.sentiment_analysis_by_topic` to conduct the sentiment analysis for a specific `topic_number`. Setting `topic_number = None` will return sentences for all the clusters. 
-CAST uses the [cardiffnlp/twitter-roberta-base-sentiment](https://huggingface.co/cardiffnlp/twitter-roberta-base-sentiment) model to conduct sentiment analysis.
+CAST uses the [cardiffnlp/twitter-roberta-base-sentiment](https://huggingface.co/cardiffnlp/twitter-roberta-base-sentiment/) model to conduct sentiment analysis.
 
 ```python
 sentiment_results = topic_model.sentiment_analysis_by_topic(topic_number=0, num_docs=5) 
@@ -228,13 +228,15 @@ Sentiment Statistics:
 
 
 ## Citation
+Please cite this [reference paper](https://arxiv.org/abs/2410.15136/), if you use this model.
+```bibtex
 @article{ma2024cast,
   title={CAST: Corpus-Aware Self-similarity Enhanced Topic modelling},
   author={Ma, Yanan and Xiao, Chenghao and Yuan, Chenhan and van der Veer, Sabine N and Hassan, Lamiece and Lin, Chenghua and Nenadic, Goran},
   journal={arXiv preprint arXiv:2410.15136},
   year={2024}
 }
-
+```
 
 ## References
 <a name="reference1">1</a>. Xiao, C., Long, Y., & Moubayed, N. A. (2022). On isotropy, contextualization and learning dynamics of contrastive-based sentence representation learning. arXiv preprint arXiv:2212.09170.
