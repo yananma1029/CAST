@@ -7,30 +7,29 @@
     <img src="https://github.com/amazingmatthew/CAST/blob/main/images/CAST.png?sanitize=true" alt="" width=800 height="whatever">
 </p>
 
->Two modules to identify meaningful candidate topic words. Module 1: word embeddings contextualized on the dataset. Module 2: self-similarity scores to filter out functional words. Purple points are documents with semantically similar documents clustered together. Higher-scoring words (green) are served as meaningful candidate topic words (green points) and assigned to their closet clusters.
+>Two modules to identify meaningful candidate topic words. Module 1: word embeddings contextualized on the dataset. Module 2: self-similarity scores to filter out functional words. Purple points represent documents, with semantically similar ones clustered together. Words with higher self-similarity scores (green) are selected over those with lower scores and assigned to their closest cluster centroid (topic vector: yellow point) as topic words (green points), rather than relying on general-domain topic words (red points).
 
-<!--
 
 ### Word embeddings contextualized on the dataset
 
-In this model, word embeddings are encoded based on their **context** within the documents, instead of **statically encoded** in the general domain as standalone tokens. In this case, the embedding for the word "bank" would differ when it appears in the context of a financial institution versus a riverbank.
+In this model, word embeddings are encoded based on their **context** within the documents, instead of **statically encoded** in the general domain as standalone tokens. In this case, the embedding for the word *"driver"* would be different in the computer science domain compared with the general domain.
 
-The word embedding, $E_{\text{word}}$, is given by:
+The word embedding, $E_{\text{final}}$, is given by:
 
-$$E_{\text{word}} = \frac{1}{P} \sum_{k=1}^{P} \text{Em}([x_1, x_2, \ldots, x_n]_k [w])$$
+$$E_{\text{final}} = \frac{1}{P} \sum_{k=1}^{P} \text{Em}([x_1, x_2, \ldots, x_n]_k [Vw])$$
 
-where $P$ is the number of different contexts in which the word appears, and $\text{Em}$ denotes the last hidden state of the embedding model output for the specified word $w$ in the given sentence. The word $w$ embedding was calculated by averaging the subword embeddings (e.g. shame ##less) that form the word.
+where $P$ is the number of different contexts in which the word appears, and $\text{Em}$ denotes the last hidden state of the embedding model output for the specified word $w$ in the given sentence. The word embedding $Vw$ was calculated by averaging the sub-word embeddings (e.g. shame ##less) that form the word.
+
 
 ### Self-similarity score
 
-Inspired by the findings in contrastive learning that functional tokens have fewer self-similarities than that of semantic tokens <sup>[1](#reference1)</sup>, we employ a self-similarity threshold  to effectively filter out functional words or less relevant words and keep meaningful candidate topic words. 
-
+Inspired by the findings in contrastive learning that functional tokens have fewer self-similarities than that of semantic tokens <sup>[1](#reference1)</sup>, we employ a self-similarity threshold  to effectively filter out functional words or less relevant words and keep meaningful candidate topic words.
 
 <p align="center">
     <img src="https://github.com/amazingmatthew/CAST/blob/main/images/ablation.png?sanitize=true" alt="" width=600 height="whatever">
 </p>
 
-> An optimal range of self-similarity scores can increase topic coherence (TC) and topic diversity (TD), but excessively high thresholds may filter out meaningful words, thereby reducing TC and TD. LLM refers to large language model based metrics.
+> Above is the ablation study of self-similarity scores. An optimal range of self-similarity scores can increase topic coherence (TC) and topic diversity (TD), but excessively high thresholds may filter out meaningful words, thereby reducing TC and TD. LLM refers to large language model based metrics.
 -->
 ## Features
 
@@ -76,19 +75,44 @@ topic_model = CAST(
     documents=documents,
     model_name="sentence-transformers/all-mpnet-base-v2", # Support other sentence embedding models
     min_count=50,
-    self_sim_threshold=0.5, 
+    self_sim_threshold=0, # Threshold to filter out lowering score words, typically functional words 
     nr_topics=10,  # set to None to automatically determine the number of topics
     verbose=True
 )
 ```
-> The `self_sim_threshold` parameter filters out lower-scoring words, which are typically not meaningful. You can adjust this value (suggested range 0.2-0.5) to achieve optimal results based on your corpus.  An excessively high threshold may filter out meaningful words, leading to lower topic coherence and diversity.
+### Determine an appropriate self-similarity threshold
 
-Run the topic modelling pipeline to find topics
+Set `self_sim_threshold = 0` (no filtering) and sort the `self-similarity scores` to manually find a threshold which can filter out most of the functional words while retaining the meaningful ones.
 
 ```python
-topics = topic_model.pipeline()
+topics, ss_scores = topic_model.pipeline()
 ```
-After this, we are going to print out the topic words for each topic
+```python
+sorted_ss_score = sorted(ss_score.items(), key=lambda item: item[1], reverse=True)
+high_ss = sorted_ss_score[:10]
+upper_ss = [item for item in sorted_ss_score if item[1] < 0.5][:10] # you can adjust the threshold and number of words to display 
+low_ss = [item for item in sorted_ss_score if item[1] < 0.4][:10]
+lowest_ss = [item for item in sorted_ss_score if item[1] < 0.3][:10]
+
+print(f"high_ss: {high_ss}")
+print(f"upper_ss: {upper_ss}")
+print(f"low_ss: {low_ss}")
+print(f"lowest_ss: {lowest_ss}") 
+```
+```python
+>>>
+high_ss: [('armenian', 0.833), ('genocide', 0.781), ('turkish', 0.772), ('homosexuality', 0.764), ('atheism', 0.755), ('arab', 0.753), ('encryption', 0.738), ('massacre', 0.737), ('homosexual', 0.735), ('israeli', 0.732)]
+upper_ss: [('student', 0.499), ('heart', 0.499), ('score', 0.499), ('split', 0.499), ('motor', 0.499), ('legitimate', 0.499), ('traditional', 0.499), ('fact', 0.498), ('sequence', 0.498), ('software', 0.498)]
+low_ss: [('capability', 0.399), ('driver', 0.399), ('operation', 0.399), ('medium', 0.399), ('practice', 0.399), ('confirm', 0.399), ('exit', 0.399), ('call', 0.398), ('error', 0.398), ('default', 0.398)]
+lowest_ss: [('<pad>', 0.299), ('great', 0.299), ('stay', 0.298), ('setting', 0.298), ('good', 0.297), ('highly', 0.297), ('possibly', 0.296), ('extremely', 0.295), ('due', 0.294), ('advance', 0.293)]
+```
+In this case, 0.4 could achieve the balance. Then, we update the threshold and re-run the model to identify topics.
+
+### Identify topic words
+
+```python
+topics, _ = topic_model.pipeline()
+```
 ```python
 for topic_id, words in topics.items():
     print(f"Topic {topic_id}: {', '.join(words)}")
@@ -109,7 +133,7 @@ Topic 9: village armenian turkish soldier army foreign russian soviet occupy org
 After running the `.pipeline`, we are going to use `.search_docs_by_topic` to get the top_n_sentences associated with the topics. You can specify a `topic_number`, or set `topic_number = None` to get the top_n_sentences for all the topics.
 
 ```python
-top_sen = model.search_docs_by_topic(topic_number = None, num_docs=10)
+top_sen = topic_model.search_docs_by_topic(topic_number = None, num_docs=10)
 ```
 
 We are going to print out the topic, topic_size and the top_sentences for each topic
@@ -131,10 +155,11 @@ print(top_sen)
 ```
 
 ## Sentiment analysis
-We are going to use `.sentiment_analysis_by_topic` to conduct the sentiment analysis for a specific `topic_number`. Setting `topic_number = None` will return sentences for all the clusters. CAST supports two models for conducting sentiment analysis: model = 'TextBolt' or 'VADER'.
+We are going to use `.sentiment_analysis_by_topic` to conduct the sentiment analysis for a specific `topic_number`. Setting `topic_number = None` will return sentences for all the clusters. 
+CAST uses the [cardiffnlp/twitter-roberta-base-sentiment](https://huggingface.co/cardiffnlp/twitter-roberta-base-sentiment) model to conduct sentiment analysis.
 
 ```python
-sentiment_results = model.sentiment_analysis_by_topic(topic_number=0, num_docs=5, model= 'TextBolt') 
+sentiment_results = topic_model.sentiment_analysis_by_topic(topic_number=0, num_docs=5) 
 ```
 Returns:
 A dictionary where keys are topic numbers, and values are dictionaries containing:
@@ -203,7 +228,12 @@ Sentiment Statistics:
 
 
 ## Citation
-
+@article{ma2024cast,
+  title={CAST: Corpus-Aware Self-similarity Enhanced Topic modelling},
+  author={Ma, Yanan and Xiao, Chenghao and Yuan, Chenhan and van der Veer, Sabine N and Hassan, Lamiece and Lin, Chenghua and Nenadic, Goran},
+  journal={arXiv preprint arXiv:2410.15136},
+  year={2024}
+}
 
 
 ## References
