@@ -83,7 +83,7 @@ topic_model = CAST(
 ```
 ### Determine an appropriate self-similarity threshold
 
-Set `self_sim_threshold = 0` (no filtering) and sort the `self-similarity scores` to manually find a threshold which can filter out most of the functional words while retaining the meaningful ones.
+Initialize `self_sim_threshold = 0` (no filtering) and sort the `self-similarity scores` to manually find a threshold which can filter out most of the functional words while retaining the meaningful ones.
 
 ```python
 topics, ss_scores = topic_model.pipeline()
