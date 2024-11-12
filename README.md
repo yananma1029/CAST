@@ -86,7 +86,7 @@ topic_model = CAST(
 Initialize `self_sim_threshold = 0` (no filtering) and sort the `self-similarity scores` to manually find a threshold which can filter out most of the functional words while retaining the meaningful ones.
 
 ```python
-topics, ss_scores = topic_model.pipeline()
+twords, ss_scores = topic_model.pipeline()
 ```
 ```python
 sorted_ss_score = sorted(ss_score.items(), key=lambda item: item[1], reverse=True)
@@ -112,10 +112,10 @@ In this case, 0.4 could achieve the balance. Then, we update the threshold and r
 ### Identify topic words
 
 ```python
-topics, _ = topic_model.pipeline()
+twords, _ = topic_model.pipeline()
 ```
 ```python
-for topic_id, words in topics.items():
+for topic_id, words in twords.items():
     print(f"Topic {topic_id}: {', '.join(words)}")
 
 >>>
