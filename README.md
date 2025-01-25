@@ -14,11 +14,18 @@
 
 In this model, word embeddings are encoded based on their **context** within the documents, instead of **statically encoded** in the general domain as standalone tokens. In this case, the embedding for the word *"driver"* would be different in the computer science domain compared with the general domain.
 
-The word embedding, $E_{\text{final}}$, is given by:
+The final word embedding, $E_{\text{final}}$, is defined as the average of the contextualized word embeddings of a word $w$ across all sequences in a corpus. Formally:
 
-$$E_{\text{final}} = \frac{1}{P} \sum_{k=1}^{P} \text{Em}([x_1, x_2, \ldots, x_n]_k [Vw])$$
+$$ E_{\text{final}} = \frac{1}{P} \sum_{i=1}^{P} C_{wi} $$
 
-where $P$ is the number of different contexts in which the word appears, and $\text{Em}$ denotes the last hidden state of the embedding model output for the specified word $w$ in the given sentence. The word embedding $Vw$ was calculated by averaging the sub-word embeddings (e.g. shame ##less) that form the word.
+where:
+
+$C_{wi}$ denotes the contextualized word embedding of the word $w$ in the $i$-th sequence.
+Given a sentence $S$, the following steps are performed to compute $C_{wi}$:
+
+1. Tokenize $S$ into subwords ${t_1, t_2, \dots, t_n}$.
+2. For each word $w$, composed of subwords ${t_{i_1}, t_{i_2}, \dots, t_{i_k}}$, its $C_{wi}$ is calculated as:
+$$C_{wi} = \frac{\text{mean}\left( \mathbf{e}{i_1}, \mathbf{e}{i_2}, \ldots, \mathbf{e}{i_k} \right)}{\left| \text{mean}\left( \mathbf{e}{i_1}, \mathbf{e}{i_2}, \ldots, \mathbf{e}{i_k} \right) \right|}$$ where $\text{mean}$ denotes the element-wise mean of the subword embeddings, and $|\cdot|$ represents the L2 norm.
 
 
 ### Self-similarity score
@@ -112,6 +119,16 @@ In this case, 0.4 could achieve the balance. Then, we update the threshold and r
 ### Identify topic words
 
 ```python
+
+topic_model = CAST(
+    documents=documents,
+    model_name="sentence-transformers/all-mpnet-base-v2", 
+    min_count=50,
+    self_sim_threshold=0.4, 
+    nr_topics=10, 
+    verbose=True
+)
+
 twords, _ = topic_model.pipeline()
 ```
 ```python
