@@ -25,7 +25,7 @@ Given a sentence $S$, the following steps are performed to compute $C_{wi}$:
 
 1. Tokenize $S$ into subwords ${t_1, t_2, \dots, t_n}$.
 2. For each word $w$, composed of subwords ${t_{i_1}, t_{i_2}, \dots, t_{i_k}}$, its $C_{wi}$ is calculated as:
-$$C_{wi} = \frac{\text{mean}\left( \mathbf{e}{i_1}, \mathbf{e}{i_2}, \ldots, \mathbf{e}{i_k} \right)}{\left| \text{mean}\left( \mathbf{e}{i_1}, \mathbf{e}{i_2}, \ldots, \mathbf{e}{i_k} \right) \right|}$$ where $\text{mean}$ denotes the element-wise mean of the subword embeddings, and $|\cdot|$ represents the L2 norm.
+$$C_{wi} = \frac{\text{mean}\left( \mathbf{e}{i_1}, \mathbf{e}{i_2}, \ldots, \mathbf{e}{i_k} \right)}{\left| \text{mean}\left( \mathbf{e}{i_1}, \mathbf{e}{i_2}, \ldots, \mathbf{e}{i_k} \right) \right|}$$ where $\text{mean}$ denotes the element-wise mean of the subword embeddings, and $|\cdot|$ represents the $L2$ norm.
 
 
 ### Self-similarity score
