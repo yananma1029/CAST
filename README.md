@@ -50,19 +50,6 @@ Inspired by the findings in contrastive learning that functional tokens have few
 - Calculates self-similarity scores for word filtering
 - Supports a customizable number of topics
 
-## Requirements
-
-- Python 3.7+
-- PyTorch
-- Transformers
-- scikit-learn
-- UMAP
-- HDBSCAN
-- pandas
-- numpy
-- tqdm
-- nltk
-
 ## Basic Usage
 
 Here's an example of using CAST to identify topic words on the benchmark 20NewsGroup dataset:
